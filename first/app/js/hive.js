@@ -44,7 +44,7 @@
             height = (configs.height || $(window).height()) - margin.top - margin.bottom;
 
         var innerRadius = 40,
-            outerRadius = 340,
+            outerRadius = 300,
             majorAngle = 2 * Math.PI / 3,
             minorAngle = 1 * Math.PI / 12;
 

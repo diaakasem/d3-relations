@@ -54,11 +54,13 @@ $(document).ready(function() {
                 Dendrogram(_.cloneDeep(compiledData), configs);
             });
             $('#forcedirected a').click(function() {
+                configs.height = 500;
                 $('#chart *').remove();
                 ForceDirected(_.cloneDeep(compiledData), configs);
             });
             $('#hive a').click(function() {
                 $('#chart *').remove();
+                configs.height = 600;
                 Hive(_.cloneDeep(compiledData), configs);
             });
             $('#matrix a').click(function() {
