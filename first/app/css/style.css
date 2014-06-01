@@ -1,6 +1,13 @@
 body {
+  background-color: #FCFCFA;
   font-size: 16px;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'sans-serif', sans-serif;
+}
+body .sidebar {
+  margin-top: 100px;
+}
+body .sidebar li {
+  list-style: none;
 }
 .forced .node {
   stroke: #fff;
@@ -31,4 +38,29 @@ body {
 .hive .node circle.active {
   stroke: red;
   stroke-width: 3px;
+}
+.dendrogram .node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.dendrogram .node {
+  font: 10px sans-serif;
+}
+.dendrogram .link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+.matrix text {
+  font: 9px sans-serif;
+}
+.matrix .background {
+  fill: #eee;
+}
+.matrix line {
+  stroke: #fff;
+}
+.matrix text.active {
+  fill: red;
 }

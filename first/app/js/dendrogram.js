@@ -3,11 +3,39 @@
     "use strict";
 
     /**
+    * Change data format to match the Hive graph
+    *
+    * @param data The data to use to draw the graph
+    * @param configs of the graph
+    */
+    function refineData (root, nodes, links) {
+
+        _.each(nodes, function(node) {
+            var nodeLinks = _.filter(links, {'source': node.index});
+            if (nodeLinks.length) {
+                node.size = _(nodeLinks).pluck('value').reduce(function(sum, v) {
+                    return sum + v;
+                });
+                node.imports = _(nodeLinks).pluck('target').map(function(s) {
+                    return _(nodes).filter({'index': s}).first();
+                }).compact().pluck('name').value();
+            } else {
+                node.imports = [];
+                node.size = 0;
+            }
+            return node;
+        });
+    }
+
+    /**
     * Draws a Dendrogram graph using d3js
     * @param data The array of object to use to draw the graph
     * @param configs of the graph
     */
-    global.Dendrogram = function (graph, configs) {
+    global.Dendrogram = function (data, configs) {
+
+        var root = [];
+        refineData(root, data.nodes, data.links);
 
         // Default configs
         if (_.isUndefined(configs)) {
@@ -48,7 +76,7 @@
 
         var nodes = cluster.nodes(root);
 
-            var link = svg.selectAll("path.link")
+        var link = svg.selectAll("path.link")
             .data(cluster.links(nodes))
             .enter().append("path")
             .attr("class", "link")

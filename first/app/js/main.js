@@ -2,9 +2,11 @@ $(document).ready(function() {
 
     var configs = {
         selector: "body div#chart",
-        height: 600,
+        height: 800,
         width: 800
     };
+
+    var compiledData;
 
     // Loading CSV data
     d3.csv("data/plot_data1.csv", function(err, data) {
@@ -44,11 +46,29 @@ $(document).ready(function() {
                 }
                 return link;
             }).compact().value();
-            var data = {nodes: nodes, links: links};
-            //ForceDirected(data, configs);
-            Dendrogram(data, configs);
-            //Hive(data, configs);
+
+            compiledData = {nodes: nodes, links: links};
+
+            $('#dendrogram a').click(function() {
+                $('#chart *').remove();
+                Dendrogram(_.cloneDeep(compiledData), configs);
+            });
+            $('#forcedirected a').click(function() {
+                $('#chart *').remove();
+                ForceDirected(_.cloneDeep(compiledData), configs);
+            });
+            $('#hive a').click(function() {
+                $('#chart *').remove();
+                Hive(_.cloneDeep(compiledData), configs);
+            });
+            $('#matrix a').click(function() {
+                $('#chart *').remove();
+                Matrix(_.cloneDeep(compiledData), configs);
+            });
+
+            // initial graph
+            $('#matrix a').click();
+
         });
     });
-
 });
