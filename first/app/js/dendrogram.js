@@ -8,23 +8,14 @@
     * @param data The data to use to draw the graph
     * @param configs of the graph
     */
-    function refineData (root, nodes, links) {
+    function refineData (nodes, links) {
 
-        _.each(nodes, function(node) {
-            var nodeLinks = _.filter(links, {'source': node.index});
-            if (nodeLinks.length) {
-                node.size = _(nodeLinks).pluck('value').reduce(function(sum, v) {
-                    return sum + v;
-                });
-                node.imports = _(nodeLinks).pluck('target').map(function(s) {
-                    return _(nodes).filter({'index': s}).first();
-                }).compact().pluck('name').value();
-            } else {
-                node.imports = [];
-                node.size = 0;
-            }
-            return node;
-        });
+        var data = d3.nest()
+            .key(function(d) {return d.group1; })
+            .key(function(d) {return d.group2; })
+            .entries(nodes);
+
+        return data;
     }
 
     /**
@@ -34,8 +25,7 @@
     */
     global.Dendrogram = function (data, configs) {
 
-        var root = [];
-        refineData(root, data.nodes, data.links);
+        var root = refineData(data.nodes, data.links);
 
         // Default configs
         if (_.isUndefined(configs)) {
@@ -48,33 +38,23 @@
 
         var color = d3.scale.category20();
 
-        var force = d3.layout.force()
-            .charge(-120)
-            .linkDistance(30)
-            .size([width, height]);
-
-        var svg = d3.select(configs.selector)
-            .attr("class", "dendrogram")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-
-        var radius = 960 / 2;
+        var radius = width / 2;
 
         var cluster = d3.layout.cluster()
-            .size([360, radius - 120]);
+            .size([360, radius - 120])
+            .children(function(d) { return d.values; });
 
         var diagonal = d3.svg.diagonal.radial()
             .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
 
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select(configs.selector).append("svg")
+            .attr("class", "dendrogram")
             .attr("width", radius * 2)
             .attr("height", radius * 2)
             .append("g")
-            .attr("transform", "translate(" + radius + "," + radius + ")");
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-        var nodes = cluster.nodes(root);
+        var nodes = cluster.nodes({name: 'root', values: root});
 
         var link = svg.selectAll("path.link")
             .data(cluster.links(nodes))

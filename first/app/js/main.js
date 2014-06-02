@@ -20,8 +20,8 @@ $(document).ready(function() {
                 } else {
                     return null;
                 }
-                if (node.group) {
-                    node.group = parseInt(node.group, 10);
+                if (node.rank) {
+                    node.rank = parseInt(node.rank, 10);
                 } else {
                     return null;
                 }
@@ -50,7 +50,7 @@ $(document).ready(function() {
             compiledData = {nodes: nodes, links: links};
 
             $('#dendrogram a').click(function() {
-                configs.height = 500;
+                configs.height = 800;
                 $('#chart *').remove();
                 Dendrogram(_.cloneDeep(compiledData), configs);
             });
@@ -65,7 +65,7 @@ $(document).ready(function() {
                 Hive(_.cloneDeep(compiledData), configs);
             });
             $('#matrix a').click(function() {
-                configs.height = 800;
+                configs.height = 850;
                 $('#chart *').remove();
                 Matrix(_.cloneDeep(compiledData), configs);
             });
