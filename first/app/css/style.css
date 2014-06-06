@@ -46,6 +46,7 @@ body .sidebar li {
 }
 .dendrogram .node {
   font: 10px sans-serif;
+  color: black;
 }
 .dendrogram .link {
   fill: none;

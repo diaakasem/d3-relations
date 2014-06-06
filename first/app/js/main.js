@@ -71,7 +71,8 @@ $(document).ready(function() {
             });
 
             // initial graph
-            $('#matrix a').click();
+            //$('#matrix a').click();
+            $('#dendrogram a').click();
 
         });
     });

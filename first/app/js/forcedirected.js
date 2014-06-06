@@ -46,7 +46,7 @@
             .enter().append("circle")
             .attr("class", "node")
             .attr("r", 5)
-            .style("fill", function(d) { return color(d.group); })
+            .style("fill", function(d) { return color(d.group2); })
             .call(force.drag);
 
         node.append("title")
