@@ -2,6 +2,24 @@
 
     "use strict";
 
+    function hashCode(s){
+        return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);              
+    }
+
+    function linkId(target) {
+        if (target.name) {
+            return target.name;
+        }
+        if (target.values && target.values.length || target._values && target._values.length) {
+            var targetIdString = _(target.values || target._values).map(linkId).reduce(function(sum, val) {
+                return sum + val;
+            }, "");
+
+            return hashCode(targetIdString);
+        }
+        return "Error";
+    }
+
     /**
     * Change data format to match the Hive graph
     *
@@ -61,14 +79,9 @@
 
         var i = 0;
 
-
         var color = d3.scale.category20();
 
         var radius = width / 2;
-
-        var cluster = d3.layout.cluster()
-            .size([360, radius - 120])
-            .children(function(d) { return d.values; });
 
         var diagonal = d3.svg.diagonal.radial()
             .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
@@ -85,33 +98,39 @@
 
         function update(source) {
 
+            var cluster = d3.layout.cluster()
+                .size([360, radius - 120])
+                .children(function(d) { return d.values; });
+
             var duration = d3.event && d3.event.altKey ? 5000 : 500;
 
             // Compute the new tree layout.
-            var nodes = cluster.nodes(root);
+            var nodes = cluster.nodes(root).reverse();
             var links = cluster.links(nodes);
 
             var link = paths.selectAll("path.link")
-                .data(links, function(d) { 
-                    return d.id || (d.id = ++i); });
+                .data(links, function(d) {
+                    return linkId(d.target);
+                });
 
             link.enter().append("path")
-                .attr("d", function(d) {
-                    var o = {x: source.x0, y: source.y0};
-                    return diagonal({source: o, target: o});
-                })
-                .transition()
-                .duration(duration)
                 .attr("class", "link")
+                .attr("d", function(d) {
+                    var o = {x: d.source.x0, y: d.source.y0};
+                    return diagonal({source: o, target: o});
+                });
+
+            link.transition()
+                .duration(duration)
                 .attr("d", diagonal);
 
             // Transition exiting nodes to the parent's new position.
-            link.exit().transition()
+            link.exit()
+                .transition()
                 .duration(duration)
                 .attr("d", function(d) {
-                    var o = {x: source.x, y: source.y};
-                    return diagonal({source: o, target: o});
-                });
+                    return diagonal({source: d.source, target: d.source});
+                }).remove();
 
             var node = svg.selectAll("g.node")
                 .data(nodes, function(d) { return d.id || (d.id = ++i); });
@@ -122,7 +141,12 @@
                     return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
                 })
                 .attr("fill", function(d) { return color(d.group2); })
-                .on("click", function(d) { toggle(d); update(d); });
+                .on("click", function(d) { 
+                    if (d.values || d.collapsed) {
+                        toggle(d); update(d); 
+                        d.collapsed = true;
+                    }
+                });
 
             nodeEnter.append("circle")
                 .attr("r", 0)
