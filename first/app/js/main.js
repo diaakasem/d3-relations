@@ -72,7 +72,8 @@ $(document).ready(function() {
 
             // initial graph
             //$('#matrix a').click();
-            $('#dendrogram a').click();
+            //$('#dendrogram a').click();
+            $('#hive a').click();
 
         });
     });
