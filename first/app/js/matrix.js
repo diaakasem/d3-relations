@@ -3,29 +3,6 @@
     "use strict";
 
     /**
-    * Change data format to match the Hive graph
-    * @param data The data to use to draw the graph
-    * @param configs of the graph
-    */
-    function refineData (nodes, links) {
-        return _.map(nodes, function(node) {
-            var nodeLinks = _.filter(links, {'target': node.index});
-            if (nodeLinks.length) {
-                node.size = _(nodeLinks).pluck('value').reduce(function(sum, v) {
-                    return sum + v;
-                });
-                node.imports = _(nodeLinks).pluck('source').map(function(s) {
-                    return _(nodes).filter({'index': s}).first();
-                }).compact().pluck('name').value();
-            } else {
-                node.imports = [];
-                node.size = 0;
-            }
-            return node;
-        });
-    }
-
-    /**
     * Draws a Hive graph using d3js
     * @param data The data to use to draw the graph
     * @param configs of the graph
@@ -78,8 +55,10 @@
         // Precompute the orders.
         var orders = {
             name: d3.range(n).sort(function(a, b) { return d3.ascending(nodes[a].name, nodes[b].name); }),
+            group1: d3.range(n).sort(function(a, b) { return d3.ascending(nodes[a].group1, nodes[b].group1); }),
+            group2: d3.range(n).sort(function(a, b) { return d3.ascending(nodes[a].group2, nodes[b].group2); }),
             count: d3.range(n).sort(function(a, b) { return nodes[b].count - nodes[a].count; }),
-            group: d3.range(n).sort(function(a, b) { return nodes[b].group - nodes[a].group; })
+            rank: d3.range(n).sort(function(a, b) { return nodes[b].rank - nodes[a].rank; })
         };
 
         // The default sort order.
@@ -133,7 +112,7 @@
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
                 .style("fill-opacity", function(d) { return z(d.z); })
-                .style("fill", function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null; })
+                .style("fill", function(d) { return nodes[d.x].name == nodes[d.y].name ? c(nodes[d.x].name) : null; })
                 .on("mouseover", mouseover)
                 .on("mouseout", mouseout);
         }
@@ -148,7 +127,6 @@
         }
 
         d3.select("#order").on("change", function() {
-            clearTimeout(timeout);
             order(this.value);
         });
 
@@ -162,17 +140,15 @@
                 .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
             .selectAll(".cell")
                 .delay(function(d) { return x(d.x) * 4; })
-                .attr("x", function(d) { return x(d.x); });
+                .attr("x", function(d) { return x(d.x); })
+                .style("fill", function(d) { return nodes[d.x][value] == nodes[d.y][value] ? c(nodes[d.x][value]) : null; })
 
             t.selectAll(".column")
                 .delay(function(d, i) { return x(i) * 4; })
                 .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
         }
 
-        var timeout = setTimeout(function() {
-            order("group");
-            d3.select("#order").property("selectedIndex", 2).node().focus();
-        }, 5000);
+        order(d3.select("#order").value);
 
     };
 }(window));

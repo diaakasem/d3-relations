@@ -50,30 +50,37 @@ $(document).ready(function() {
             compiledData = {nodes: nodes, links: links};
 
             $('#dendrogram a').click(function() {
+                $("#controls").hide();
                 configs.height = 800;
                 $('#chart *').remove();
                 Dendrogram(_.cloneDeep(compiledData), configs);
             });
+
             $('#forcedirected a').click(function() {
+                $("#controls").hide();
                 configs.height = 500;
                 $('#chart *').remove();
                 ForceDirected(_.cloneDeep(compiledData), configs);
             });
+
             $('#hive a').click(function() {
+                $("#controls").hide();
                 $('#chart *').remove();
                 configs.height = 600;
                 Hive(_.cloneDeep(compiledData), configs);
             });
+
             $('#matrix a').click(function() {
+                $("#controls").show();
                 configs.height = 850;
                 $('#chart *').remove();
                 Matrix(_.cloneDeep(compiledData), configs);
             });
 
             // initial graph
-            //$('#matrix a').click();
+            $('#matrix a').click();
             //$('#dendrogram a').click();
-            $('#hive a').click();
+            //$('#hive a').click();
 
         });
     });
