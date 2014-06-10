@@ -2,6 +2,7 @@ $(document).ready(function() {
 
     var configs = {
         selector: "body div#chart",
+        crossfilter_selector: "body div#crossfilter_chart",
         height: 800,
         width: 800
     };

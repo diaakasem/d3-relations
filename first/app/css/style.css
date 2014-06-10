@@ -65,3 +65,30 @@ body .sidebar li {
 .matrix text.active {
   fill: red;
 }
+.crossfilter svg {
+  font: 9px sans-serif;
+}
+.crossfilter .area {
+  fill: steelblue;
+  clip-path: url(#clip);
+}
+.crossfilter .line {
+  fill: none;
+  stroke: steelblue;
+  shape-rendering: crispEdges;
+  stroke-width: 2px;
+}
+.crossfilter .tick {
+  font: 9px sans-serif;
+}
+.crossfilter .axis path,
+.crossfilter .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.crossfilter .brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}

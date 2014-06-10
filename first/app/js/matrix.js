@@ -9,6 +9,15 @@
     */
     global.Matrix = function (data, configs) {
 
+        function onCrossFilter (domain) {
+        }
+
+        CrossFilter(data.links, {
+            'width': configs.width,
+            'height': 200,
+            'selector': configs.crossfilter_selector
+        }, onCrossFilter);
+
         // Default configs
         if (_.isUndefined(configs)) {
             configs = {margin: {}};

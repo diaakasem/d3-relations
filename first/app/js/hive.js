@@ -13,6 +13,15 @@
         if (_.isUndefined(configs)) {
             configs = {margin: {}};
         }
+        function onCrossFilter (domain) {
+        }
+
+        CrossFilter(data.links, {
+            'width': configs.width,
+            'height': 200,
+            'selector': configs.crossfilter_selector
+        }, onCrossFilter);
+
 
         var margin = _.extend({top: 20, right: 20, bottom: 30, left: 85}, configs.margin),
             width = (configs.width || $(window).width()) - margin.left - margin.right,
