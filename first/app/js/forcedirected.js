@@ -17,7 +17,7 @@
 
         CrossFilter(data.links, {
             'width': configs.width,
-            'height': 200,
+            'height': 150,
             'selector': configs.crossfilter_selector
         }, onCrossFilter);
 

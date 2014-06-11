@@ -5,7 +5,7 @@
     var parseDate = d3.time.format("%d/%m/%Y %H:%M").parse;
 
     function type(d) {
-        d.key = parseDate(d.key);
+        d.key = new Date(d.key);
         d.values = +d.values;
         return d;
     }
@@ -18,11 +18,6 @@
     global.CrossFilter = function (data, configs, callback) {
 
         $(configs.selector).find("*").remove();
-
-        data = _(data).map(function(d) {
-            d.key = new Date(d.key);
-            return d;
-        }).value();
 
         data = d3.nest()
             .key(function(d) { return d.DateTime; })

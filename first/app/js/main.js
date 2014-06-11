@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+    var parseDate = d3.time.format("%d/%m/%Y %H:%M").parse;
     var configs = {
         selector: "body div#chart",
         crossfilter_selector: "body div#crossfilter_chart",
@@ -30,6 +31,9 @@ $(document).ready(function() {
             }).compact().value();
             // Converting links attributes from strings to integers
             links = _(links).map(function(link) { 
+
+                link.DateTime = parseDate(link.DateTime);
+
                 if (link.source) {
                     link.source = parseInt(link.source, 10);
                 } else {
