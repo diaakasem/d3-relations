@@ -83,7 +83,8 @@ $(document).ready(function() {
             });
 
             // initial graph
-            $('#matrix a').click();
+            $('#forcedirected a').click();
+            //$('#matrix a').click();
             //$('#dendrogram a').click();
             //$('#hive a').click();
 
