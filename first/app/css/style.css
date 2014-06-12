@@ -45,6 +45,7 @@ body .sidebar li {
   stroke-width: 1.5px;
 }
 .dendrogram .node {
+  stroke-width: 0;
   font: 10px sans-serif;
   color: black;
 }

@@ -163,6 +163,7 @@
             nodeEnter.append("text")
                 .attr("dy", ".31em")
                 .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+                .style("color", function(d) { return color(d.group2); })
                 .attr("transform", function(d) {
                     return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)";
                 })
