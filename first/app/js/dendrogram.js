@@ -67,15 +67,6 @@
         if (_.isUndefined(configs)) {
             configs = {margin: {}};
         }
-        function onCrossFilter (domain) {
-        }
-
-        CrossFilter(data.links, {
-            'width': configs.width,
-            'height': 150,
-            'selector': configs.crossfilter_selector
-        }, onCrossFilter);
-
 
         var margin = _.extend({top: 20, right: 20, bottom: 30, left: 85}, configs.margin),
             width = (configs.width || $(window).width()) - margin.left - margin.right,
@@ -105,17 +96,22 @@
         var paths = svg.append("g")
             .attr("class", "paths");
 
-        function update(source) {
+        var cluster = d3.layout.cluster()
+            .size([360, radius - 120])
+            .children(function(d) { return d.values; });
 
-            var cluster = d3.layout.cluster()
-                .size([360, radius - 120])
-                .children(function(d) { return d.values; });
+        function update(source, crossfilter) {
 
             var duration = d3.event && d3.event.altKey ? 5000 : 500;
 
             // Compute the new tree layout.
             var nodes = cluster.nodes(root).reverse();
             var links = cluster.links(nodes);
+
+            if (crossfilter) {
+                paths.select("path.link").remove();
+                svg.select(".node").remove();
+            }
 
             var link = paths.selectAll("path.link")
                 .data(links, function(d) {
@@ -209,6 +205,32 @@
         }
         //root.values.forEach(toggleAll);
         update(root);
+
+        var onCrossFilter =  _.debounce(function (domain) {
+
+            var links = _.filter(data.links, function(d) {
+                return domain[0] <= d.DateTime && d.DateTime <= domain[1];
+            });
+
+            var nodes = _.filter(data.nodes, function(d) {
+                return _.filter(links, function(link) {
+                    return link.source === d.index || link.target === d.index;
+                }).length;
+            });
+
+            root = refineData(nodes, links);
+            root = {name: 'root', values: root};
+            root.x0 = height / 2;
+            root.y0 = 0;
+
+            update(root, true);
+        }, 500, {trailing: true});
+
+        CrossFilter(data.links, {
+            'width': configs.width,
+            'height': 150,
+            'selector': configs.crossfilter_selector
+        }, onCrossFilter);
 
     };
 }(window));

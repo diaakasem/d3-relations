@@ -88,7 +88,7 @@
             });
 
             update({links: links, nodes: nodes}, true);
-        }, 250, {trailing: true});
+        }, 500, {trailing: true});
 
         CrossFilter(data.links, {
             'width': configs.width,
