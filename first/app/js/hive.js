@@ -106,14 +106,18 @@
             var node = svg.selectAll(".node")
                 .data(nodes);
 
-            node.enter().append("circle")
-                .attr("class", "node")
+            var nodeEnter = node.enter().append("circle");
+
+            nodeEnter.attr("class", "node")
                 .attr("transform", function(d) { return "rotate(" + degrees(angle(d.group1)) + ")"; })
                 .attr("cx", radius)
                 .attr("r", 5)
                 .style("fill", function(d) { return color(d.group2); })
                 .on("mouseover", nodeMouseover)
                 .on("mouseout", mouseout);
+
+            nodeEnter.append("title")
+                .text(function(d) { return d.name; });
 
             node.exit().remove();
 
