@@ -2,8 +2,6 @@
 
     "use strict";
 
-    var parseDate = d3.time.format("%d/%m/%Y %H:%M").parse;
-
     function type(d) {
         d.key = new Date(d.key);
         d.values = +d.values;
@@ -16,6 +14,8 @@
     * @param configs of the graph
     */
     global.CrossFilter = function (data, configs, callback) {
+
+        $('.btn').button();
 
         $(configs.selector).find("*").remove();
 
@@ -42,6 +42,8 @@
 
         var xAxis = d3.svg.axis().scale(x).orient("bottom"),
             yAxis = d3.svg.axis().scale(y).orient("left");
+
+        $("input[name='options']").on('change', updateFormat);
 
         var brush = d3.svg.brush()
             .x(x)
@@ -85,6 +87,13 @@
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
+
+        function updateFormat() {
+            var format = $(".btn-group.date-format input:checked").val();
+            xAxis.tickFormat(d3.time.format(format));
+            context.select('g.x.axis').call(xAxis);
+        }
+        updateFormat();
 
         focus.append("g")
             .attr("class", "y axis")
