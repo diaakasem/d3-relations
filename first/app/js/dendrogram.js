@@ -228,7 +228,6 @@
         }, 500, {trailing: true});
 
         CrossFilter(data.links, {
-            'width': configs.width,
             'height': 150,
             'selector': configs.crossfilter_selector
         }, onCrossFilter);

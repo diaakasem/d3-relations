@@ -33,7 +33,7 @@
             configs = {margin: {}};
         }
 
-        var margin = _.extend({top: 10, right: 0, bottom: 50, left: 40}, configs.margin),
+        var margin = _.extend({top: 10, right: 100, bottom: 50, left: 40}, configs.margin),
             width = (configs.width || $(window).width()) - margin.left - margin.right,
             height = (configs.height || $(window).height()) - margin.top - margin.bottom;
 

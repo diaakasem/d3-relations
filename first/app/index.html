@@ -19,6 +19,13 @@
     <script src="js/main.js"></script>
   </head>
   <body>
+
+    <div class="row">
+      <!--<div class="col-lg-offset-2 col-lg-10">-->
+      <div class="col-lg-12">
+        <div id="crossfilter_chart"></div>
+      </div>
+    </div>
     <div class="container">
       <div class="row" style="display: none;" id="controls">
         <div class="col-xs-6 col-sm-4 col-lg-4">
@@ -31,33 +38,27 @@
           </select>
         </div>
       </div>
-    <div class="row">
-      <aside class="col-lg-2">
-      <ul class="sidebar">
-        <li class="chart" title="Force Directed" id="forcedirected">
-        <a href="#">Force Directed</a>
-        </li>
-        <li class="chart" title="Dendrogram" id="dendrogram">
-        <a href="#">Dendrogram</a>
-        </li>
-        <li class="chart" title="Hive" id="hive">
-        <a href="#">Hive</a>
-        </li>
-        <li class="chart" title="Matrix" id="matrix">
-        <a href="#">Matrix </a>
-        </li>
-      </ul>
-      </aside>
-      <div class="col-lg-10">
-        <div id="chart"></div>
+      <div class="row">
+        <aside class="col-lg-2">
+        <ul class="sidebar">
+          <li class="chart" title="Force Directed" id="forcedirected">
+          <a href="#">Force Directed</a>
+          </li>
+          <li class="chart" title="Dendrogram" id="dendrogram">
+          <a href="#">Dendrogram</a>
+          </li>
+          <li class="chart" title="Hive" id="hive">
+          <a href="#">Hive</a>
+          </li>
+          <li class="chart" title="Matrix" id="matrix">
+          <a href="#">Matrix </a>
+          </li>
+        </ul>
+        </aside>
+        <div class="col-lg-10">
+          <div id="chart"></div>
+        </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-offset-2 col-lg-10">
-        <div id="crossfilter_chart"></div>
-      </div>
-    </div>
 
     </div>
     <div class="tooltip" style="opacity: 0"></div>
