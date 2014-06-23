@@ -205,7 +205,7 @@
             d3.select(self.frameElement).style("height", radius * 2 + "px");
         }
         //root.values.forEach(toggleAll);
-        update(root);
+        //update(root);
 
         var onCrossFilter =  _.debounce(function (domain) {
 

@@ -142,7 +142,7 @@
                 return radians / Math.PI * 180 - 90;
             }
         }
-        update(data);
+        //update(data);
 
         var onCrossFilter =  _.debounce(function (domain) {
 

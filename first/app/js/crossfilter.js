@@ -8,6 +8,21 @@
         return d;
     }
 
+    function saveExtent(brush) {
+        var extent = brush.extent();
+        localStorage.setItem('crossfilter_extent', JSON.stringify(extent));
+    }
+
+    function loadExtent(brush) {
+        var extent = localStorage.getItem('crossfilter_extent');
+        if (extent) {
+            extent = JSON.parse(extent);
+            extent[0] = new Date(extent[0]);
+            extent[1] = new Date(extent[1]);
+            brush.extent(extent);
+        }
+    }
+
     /**
     * Draws a crosfilter that filters the rest of graphs
     * @param data The data to use to draw the graph
@@ -96,6 +111,7 @@
             xAxis.tickFormat(d3.time.format(format));
             context.select('g.x.axis').call(xAxis);
         }
+
         updateFormat();
 
         focus.append("g")
@@ -111,15 +127,21 @@
 
         function brushed() {
             callback(brush.empty() ? x.domain() : brush.extent());
+            saveExtent(brush);
             //x.domain(brush.empty() ? x.domain() : brush.extent());
             //focus.select(".line").attr("d", line);
             //focus.select(".x.axis").call(xAxis);
         }
 
+        loadExtent(brush);
+        brushed();
+        svg.selectAll('.brush').call(brush);
+
         $('#reset_time').click(function() { 
             brush.clear();
             svg.selectAll('.brush').call(brush);
             brushed();
+            saveExtent(brush);
         });
 
     };

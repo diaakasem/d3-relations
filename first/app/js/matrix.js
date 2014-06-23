@@ -40,7 +40,9 @@
 
             // Compute index per node.
             nodes.forEach(function(node, i) {
-                node.index = i;
+                if (_.isUndefined(node.index)) {
+                    node.index = i;
+                }
                 node.count = 0;
                 matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0}; });
             });
@@ -65,6 +67,7 @@
                 count: d3.range(n).sort(function(a, b) { return nodes[b].count - nodes[a].count; }),
                 rank: d3.range(n).sort(function(a, b) { return nodes[b].rank - nodes[a].rank; })
             };
+            var originalOrders = _.cloneDeep(orders);
 
             // The default sort order.
             x.domain(orders.name);
@@ -167,7 +170,7 @@
             order($("#order").val());
         }
 
-        update(data);
+        //update(data);
 
         var onCrossFilter =  _.debounce(function (domain) {
 
