@@ -116,6 +116,12 @@
             //focus.select(".x.axis").call(xAxis);
         }
 
+        $('#reset_time').click(function() { 
+            brush.clear();
+            svg.selectAll('.brush').call(brush);
+            brushed();
+        });
+
     };
 }(window));
 
