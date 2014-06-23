@@ -75,6 +75,9 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         var xdomain = d3.extent(_.pluck(data, 'key'));
+        var diff = xdomain[1] - xdomain[0];
+        // add a margin that is 1/100 of the whole period
+        xdomain[0] = new Date(xdomain[0] - diff / 100);
         x.domain(xdomain);
         y.domain([0, d3.max(_.pluck(data, 'values'))]);
 
