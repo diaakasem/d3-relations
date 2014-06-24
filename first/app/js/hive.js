@@ -8,6 +8,7 @@
     * @param configs of the graph
     */
     global.Hive = function (data, configs) {
+        var tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d.name; });
 
         // Default configs
         if (_.isUndefined(configs)) {
@@ -61,11 +62,11 @@
 
         function update(data, crossfilter) {
 
-            var nodes = data.nodes;
+            var nodes = _.sortBy(data.nodes, 'name');
             var links = _(data.links).map(function(link) {
                 return {
                     source: nodes[link.source],
-                target: nodes[link.target]
+                    target: nodes[link.target]
                 };
             }).value();
             var axes = _.uniq(nodes, 'group1');
@@ -108,12 +109,12 @@
 
             var nodeEnter = node.enter().append("circle");
 
-            nodeEnter.attr("class", "node")
+            nodeEnter.attr("class", function(d) { return "node " + d.name; })
                 .attr("transform", function(d) { return "rotate(" + degrees(angle(d.group1)) + ")"; })
                 .attr("cx", radius)
                 .attr("r", 5)
                 .style("fill", function(d) { return color(d.group2); })
-                .on("mouseover", nodeMouseover)
+                .on("click", updateNode)
                 .on("mouseout", mouseout);
 
             nodeEnter.append("title")
@@ -125,12 +126,7 @@
             function linkMouseover(d) {
                 svg.selectAll(".link").classed("active", function(p) { return p === d; });
                 svg.selectAll(".node circle").classed("active", function(p) { return p === d.source || p === d.target; });
-            }
-
-            // Highlight the node and connected links on mouseover.
-            function nodeMouseover(d) {
-                svg.selectAll(".link").classed("active", function(p) { return p.source === d || p.target === d; });
-                d3.select(this).classed("active", true);
+                //tip.show(d);
             }
 
             // Clear any highlighted nodes or links.
@@ -138,9 +134,49 @@
                 svg.selectAll(".active").classed("active", false);
             }
 
+            function saveNode(node) {
+                if (node) {
+                    localStorage.setItem("selected_node", node.name);
+                } else {
+                    localStorage.removeItem("selected_node");
+                }
+            }
+
+            function loadNode() {
+                var nodeName = localStorage.getItem("selected_node");
+                if (nodeName) {
+                    var node = _.find(nodes, {name: nodeName});
+                    var e = document.createEvent('UIEvents');
+                    if (e) {
+                        e.initUIEvent('click', true, true);
+                        d3.select("." + node.name).node().dispatchEvent(e);
+                    } else {
+                        console.log("Cant find node : [ " + nodeName + " ]");
+                    }
+                }
+            }
+            
+            function updateNode(node) { 
+                saveNode(node);
+                if (node) {
+                    svg.selectAll(".link").classed("active", function(p) { return p.source === node.index || p.target === node.index; });
+                    d3.select("." + node.name).classed("active", true);
+                    tip.show(node);
+                } else {
+                    mouseout();
+                    tip.hide();
+                }
+            }
+
+            // Clearing the tip
+            $('a').click(tip.hide);
+
             function degrees(radians) {
                 return radians / Math.PI * 180 - 90;
             }
+
+            svg.call(tip);
+            setTimeout(loadNode, 1000);
         }
         //update(data);
 

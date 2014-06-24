@@ -13,6 +13,17 @@ body .sidebar li {
   stroke: #fff;
   stroke-width: 1.5px;
 }
+.forced .node text {
+  opacity: 0;
+  stroke: #484848;
+  pointer-events: none;
+}
+.forced .node.active text {
+  opacity: 1;
+}
+.forced .node.visible text {
+  opacity: 1;
+}
 .forced .link {
   stroke: #999;
   stroke-opacity: .6;
@@ -36,8 +47,12 @@ body .sidebar li {
   stroke-opacity: 1;
 }
 .hive .node circle.active {
+  opacity: 1;
   stroke: red;
   stroke-width: 3px;
+}
+.dendrogram text {
+  opacity: 1;
 }
 .dendrogram .node circle {
   fill: #fff;
@@ -48,6 +63,13 @@ body .sidebar li {
   stroke-width: 0;
   font: 10px sans-serif;
   color: black;
+}
+.dendrogram .node text {
+  opacity: 1;
+}
+.dendrogram .node.bold text {
+  font-weight: bold;
+  font-size: 1.2em;
 }
 .dendrogram .link {
   fill: none;
@@ -65,6 +87,10 @@ body .sidebar li {
 }
 .matrix text.active {
   fill: red;
+}
+.matrix text.bold {
+  fill: blue;
+  font-weight: bold;
 }
 .crossfilter svg {
   font: 9px sans-serif;

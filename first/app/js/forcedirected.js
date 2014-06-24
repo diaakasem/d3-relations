@@ -8,6 +8,7 @@
     * @param configs of the graph
     */
     global.ForceDirected = function (data, configs) {
+        var tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d.name; });
         // Default configs
         if (_.isUndefined(configs)) {
             configs = {margin: {}};
@@ -52,13 +53,18 @@
             var node = svg.selectAll(".node")
                 .data(data.nodes, function(d) { return d.index; });
 
-            var nodeEnter = node.enter().append("circle")
-                .attr("class", "node")
-                .attr("r", 5)
-                .style("fill", function(d) { return color(d.group2); })
+            var nodeEnter = node.enter().append("g")
+                .on("click", updateNode)
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout)
+                .attr("class", function(d) { return "node " + d.name; })
                 .call(force.drag);
 
-            nodeEnter.append("title")
+            nodeEnter.append("circle")
+                .attr("r", 5)
+                .style("fill", function(d) { return color(d.group2); });
+
+            nodeEnter.append("text")
                 .text(function(d) { return d.name; });
 
             node.exit().remove()
@@ -69,9 +75,49 @@
                     .attr("x2", function(d) { return d.target.x; })
                     .attr("y2", function(d) { return d.target.y; });
 
-                nodeEnter.attr("cx", function(d) { return d.x; })
-                    .attr("cy", function(d) { return d.y; });
+                // Translate the groups
+                nodeEnter.attr("transform", function(d) { 
+                    return 'translate(' + [d.x, d.y] + ')'; 
+                });    
+
             }, 30));
+
+            function saveNode(node) {
+                if (node) {
+                    localStorage.setItem("selected_node", node.name);
+                } else {
+                    localStorage.removeItem("selected_node");
+                }
+            }
+
+            // Clear any highlighted nodes or links.
+            function loadNode() {
+                var nodeName = localStorage.getItem("selected_node");
+                if (nodeName) {
+                    var node = _.find(nodes, {name: nodeName});
+                    var e = document.createEvent('UIEvents');
+                    if (e) {
+                        e.initUIEvent('click', true, true);
+                        d3.select("." + node.name).node().dispatchEvent(e);
+                    } else {
+                        console.log("Cant find node : [ " + nodeName + " ]");
+                    }
+                }
+            }
+            
+            function mouseover(node) { 
+                d3.select(this).classed("visible", true);
+            }
+            function mouseout(node) { 
+                d3.select(this).classed("visible", false);
+            }
+            function updateNode(node) { 
+                saveNode(node);
+                d3.select(".forced .active").classed("active", false);
+                d3.select(".forced ." + node.name).classed("active", !!node);
+            }
+
+            setTimeout(loadNode, 1000);
         }
 
         update(data);

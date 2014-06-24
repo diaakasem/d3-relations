@@ -71,7 +71,7 @@ $(document).ready(function() {
             $('#hive a').click(function() {
                 $("#controls").hide();
                 $('#chart *').remove();
-                configs.height = 600;
+                configs.height = 900;
                 Hive(_.cloneDeep(compiledData), configs);
             });
 

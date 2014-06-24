@@ -141,7 +141,7 @@
                 .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
             var nodeEnter = node.enter().append("g")
-                .attr("class", "node")
+                .attr("class", function(d) { return "node " + d.name; })
                 .attr("transform", function(d) {
                     return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
                 })
@@ -150,6 +150,10 @@
                     if (d.values || d.collapsed) {
                         toggle(d); update(d); 
                         d.collapsed = true;
+                    } else {
+                        d3.select(".dendrogram .bold").classed("bold", false);
+                        d3.select(this).classed("bold", true);
+                        saveNode(d);
                     }
                 });
 
@@ -203,6 +207,31 @@
             });
 
             d3.select(self.frameElement).style("height", radius * 2 + "px");
+
+            function saveNode(node) {
+                if (node) {
+                    localStorage.setItem("selected_node", node.name);
+                } else {
+                    localStorage.removeItem("selected_node");
+                }
+            }
+
+            function loadNode() {
+                var nodeName = localStorage.getItem("selected_node");
+                if (nodeName) {
+                    var node = _.find(nodes, {name: nodeName});
+                    var e = document.createEvent('UIEvents');
+                    if (e) {
+                        e.initUIEvent('click', true, true);
+                        d3.select(".dendrogram ." + node.name).node().dispatchEvent(e);
+                    } else {
+                        console.log("Cant find node : [ " + nodeName + " ]");
+                    }
+                }
+            }
+            
+            // Clearing the tip
+            setTimeout(loadNode, 1000);
         }
         //root.values.forEach(toggleAll);
         //update(root);

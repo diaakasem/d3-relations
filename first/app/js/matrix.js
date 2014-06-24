@@ -44,7 +44,7 @@
                     node.index = i;
                 }
                 node.count = 0;
-                matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0}; });
+                matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0, node: node, nodename: node.name}; });
             });
 
             // Convert links to matrix; count character occurrences.
@@ -91,6 +91,7 @@
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "end")
+                .attr('class', function(d, i) { return nodes[i].name; })
                 .text(function(d, i) { return nodes[i].name; });
 
             var rowExit = rowData.exit();
@@ -111,13 +112,14 @@
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "start")
+                .attr('class', function(d, i) { return nodes[i].name; })
                 .text(function(d, i) { return nodes[i].name; });
 
             var columnExit = column.exit();
             columnExit.remove();
 
             function row(row) {
-                var cell = d3.select(this).selectAll(".cell")
+                var cell = d3.select(this).selectAll(".matrix .cell")
                     .data(row.filter(function(d) { return d.z; }));
 
                 cell.enter().append("rect")
@@ -128,18 +130,51 @@
                     .style("fill-opacity", function(d) { return z(d.z); })
                     .style("fill", function(d) { return nodes[d.x].name == nodes[d.y].name ? c(nodes[d.x].name) : null; })
                     .on("mouseover", mouseover)
-                    .on("mouseout", mouseout);
+                    .on("mouseout", mouseout)
+                    .on("click", click);
 
                 cell.exit().remove();
             }
 
+            function click(p) {
+                var node = nodes[p.x].name == nodes[p.y].name ? nodes[p.x] : null;
+                updateNode(node);
+            }
+
+            function saveNode(node) {
+                if (node) {
+                    localStorage.setItem("selected_node", node.name);
+                } else {
+                    localStorage.removeItem("selected_node");
+                }
+            }
+
+            function loadNode() {
+                var nodeName = localStorage.getItem("selected_node");
+                if (nodeName) {
+                    var node = _.find(nodes, {name: nodeName});
+                    updateNode(node);
+                }
+            }
+            
+            function updateNode(node) { 
+                saveNode(node);
+                if (node) {
+                    d3.selectAll(".matrix text.bold").classed("bold", false);
+                    d3.selectAll(".matrix .row text." + node.name).classed("bold", true);
+                    d3.selectAll(".matrix .column text." + node.name).classed("bold", true);
+                } else {
+                    d3.selectAll(".matrix text.bold").classed("bold", false);
+                }
+            }
+
             function mouseover(p) {
-                d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
-                d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
+                d3.selectAll(".matrix .row text").classed("active", function(d, i) { return i == p.y; });
+                d3.selectAll(".matrix .column text").classed("active", function(d, i) { return i == p.x; });
             }
 
             function mouseout() {
-                d3.selectAll("text").classed("active", false);
+                d3.selectAll(".matrix text").classed("active", false);
             }
 
             d3.select("#order").on("change", function() {
@@ -154,7 +189,7 @@
 
                 var t = svg.transition().duration(crossfilter ? 0 : 2500);
 
-                t.selectAll(".row")
+                t.selectAll(".matrix .row")
                     .delay(function(d, i) { return crossfilter ? 0 : x(i) * 4; })
                     .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
                 .selectAll(".cell")
@@ -162,12 +197,13 @@
                     .attr("x", function(d) { return x(d.x); })
                     .style("fill", function(d) { return nodes[d.x][value] == nodes[d.y][value] ? c(nodes[d.x][value]) : null; })
 
-                t.selectAll(".column")
+                t.selectAll(".matrix .column")
                     .delay(function(d, i) { return crossfilter ? 0 : x(i) * 4; })
                     .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
             }
 
             order($("#order").val());
+            loadNode();
         }
 
         //update(data);
